@@ -6,4 +6,5 @@ import com.utfpr.delivery.entity.Restaurante;
 
 public interface RestauranteRepository extends JpaRepository<Restaurante, Long> {
 	
+	public Restaurante findByUuid(String uuid);
 }

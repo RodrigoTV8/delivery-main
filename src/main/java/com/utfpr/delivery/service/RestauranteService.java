@@ -1,7 +1,5 @@
 package com.utfpr.delivery.service;
 
-
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,7 +9,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.utfpr.delivery.entity.Restaurante;
+import com.utfpr.delivery.exception.NotFoundException;
 import com.utfpr.delivery.repository.RestauranteRepository;
+
 
 @Service
 public class RestauranteService {
@@ -37,19 +37,29 @@ public class RestauranteService {
 		
 	}
 	
+	public Restaurante getRestauranteByUuid(String uuid) {
+		
+		Restaurante restaurante = restauranteRepository.findByUuid(uuid);
+		if(restaurante == null) {
+			throw new NotFoundException("Restaurante não encontrado");
+		}
+		return restaurante;
+		
+	}
+	
 	public Restaurante salvar(Restaurante restaurante) {
 		
 		return restauranteRepository.save(restaurante);
 		
 	}
 	
-	public Restaurante alterar(Long id, Restaurante restaurante) {
+	public Restaurante alterar(String uuid, Restaurante restaurante) {
 		
-		Restaurante restauranteAtual = this.getRestauranteById(id);
+		Restaurante restauranteAtual = this.getRestauranteByUuid(uuid);
 		
 		if (restauranteAtual != null) {
 			
-			BeanUtils.copyProperties(restaurante, restauranteAtual, "id");
+			BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "uuid");
 			
 			return restauranteRepository.save(restauranteAtual);
 			
@@ -59,9 +69,9 @@ public class RestauranteService {
 		
 	}
 	
-public Restaurante alterarPontual(Long id, Restaurante restaurante) {
+public Restaurante alterarPontual(String uuid, Restaurante restaurante) {
 		
-		Restaurante restauranteAtual = this.getRestauranteById(id);
+		Restaurante restauranteAtual = this.getRestauranteByUuid(uuid);
 		
 		if (restauranteAtual != null) {
 			
@@ -81,9 +91,9 @@ public Restaurante alterarPontual(Long id, Restaurante restaurante) {
 	}
 	
 	
-	public boolean excluir(Long id) {
+	public boolean excluir(String uuid) {
 		
-		Restaurante restaurante = this.getRestauranteById(id);
+		Restaurante restaurante = this.getRestauranteByUuid(uuid);
 		
 		if (restaurante != null) {
 			
